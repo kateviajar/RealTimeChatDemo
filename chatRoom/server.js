@@ -9,7 +9,7 @@ const formatMessage = require('./utils/messages');
 const {userJoin, getCurrentUser, userLeave, getRoomUsers} = require('./utils/users');
 
 const app = express();
-// create a server
+// Set up a server to handle socket.io
 const server = http.createServer(app);
 // Initialize the socketio object
 const io = socketio(server);
@@ -25,8 +25,9 @@ io.on('connection', socket => {
   // Get username and room from client
   socket.on('joinRoom', ({ username, room }) => {
     // user join the room
-    const user = userJoin(socket.id, username, room); // add user in the memory
+    const user = userJoin(socket.id, username, room); // add user in the users array
 
+    // subscribe the socket to a given channel
     socket.join(user.room);
 
     console.log('New WebSocket Connection ...');
