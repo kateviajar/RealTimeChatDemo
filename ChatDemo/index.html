@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DemoChat</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+<ul id="message_list"></ul>
+<form id="message_area" action="">
+    <input id="text_area" autocomplete="off" />
+    <button>Send</button>
+</form>
+
+<script>
+    const socket = io();
+
+    // Here we are asking for username whenever new user enters
+    const username = window.prompt("Enter the username");
+    socket.emit('new user', username);
+
+    const messageForm = document.getElementById('message_area');
+    const textInput = document.getElementById('text_area');
+
+    // When clicking the send button, the text from the input field will be sent to the server as a new message event.
+    messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (textInput.value) {socket.emit('new message', textInput.value);
+            textInput.value = '';
+        }
+    });
+
+    // Over here We’re populating the list of messages whenever we receive a send message event from the server.
+    socket.on('send message', (data) => {
+        const messageList = document.getElementById('message_list');
+        const chatItem = document.createElement('li');
+        chatItem.textContent = data.user + ': ' + data.message;
+        messageList.appendChild(chatItem);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+</script>
+
+</body>
+
+</html>
